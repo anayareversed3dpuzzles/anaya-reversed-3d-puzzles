@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Anaya Reversed 3D Puzzles</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container nav">
+      <div class="logo">
+        <!-- If you have a logo image, use <img src="images/logo.png" alt="Anaya Reversed 3D Puzzles"> -->
+        <span>Anaya Reversed™ 3D Puzzles</span>
+      </div>
+      <nav>
+        <a href="#about">About</a>
+        <a href="#catalog">Catalog</a>
+        <a href="#custom">Custom Request</a>
+        <a href="#contact">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <!-- HERO -->
+    <section class="hero">
+      <div class="container hero-content">
+        <div>
+          <h1>Premium 3D jigsaw puzzles, uniquely “reversed.”</h1>
+          <p>
+            Anaya Reversed™ 3D Puzzles blends clever design, custom 3D printing,
+            and a name with a story—Anaya spelled backwards is Ayana.
+          </p>
+          <a href="#catalog" class="btn-primary">View Puzzle Catalog</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section id="about" class="section">
+      <div class="container">
+        <h2>About Anaya Reversed</h2>
+        <p>
+          I’m Ayana, the maker behind Anaya Reversed™ 3D Puzzles. My name comes
+          from my mom’s last name, <strong>Anaya</strong>, spelled backwards—
+          and that “reversed” idea inspired a line of puzzles that flip the
+          ordinary into something special.
+        </p>
+        <ul>
+          <li>Custom 3D-printed jigsaw puzzles</li>
+          <li>Unique shapes, layers, and themes</li>
+          <li>Perfect for gifts, desk toys, and collectors</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- CATALOG -->
+    <section id="catalog" class="section section-alt">
+      <div class="container">
+        <h2>Puzzle Catalog</h2>
+        <p>Browse some of my ready-made 3D puzzle designs.</p>
+
+        <div class="grid">
+          <!-- Puzzle Card 1 -->
+          <article class="card">
+            <h3>Desert Sunrise Layers</h3>
+            <p class="card-tagline">Layered landscape 3D jigsaw</p>
+            <p>Approx. 6" x 6" &mdash; ~80 pieces</p>
+            <p class="price">$35</p>
+          </article>
+
+          <!-- Puzzle Card 2 -->
+          <article class="card">
+            <h3>Geometric Stack Challenge</h3>
+            <p class="card-tagline">3D tower puzzle with interlocking shapes</p>
+            <p>Approx. 4" x 4" x 4" &mdash; ~60 pieces</p>
+            <p class="price">$40</p>
+          </article>
+
+          <!-- Puzzle Card 3 -->
+          <article class="card">
+            <h3>Spiral Galaxy Maze</h3>
+            <p class="card-tagline">Flat spiral jigsaw with hidden paths</p>
+            <p>Approx. 8" x 8" &mdash; ~100 pieces</p>
+            <p class="price">$45</p>
+          </article>
+
+          <!-- Add more puzzle cards by copying article.card and editing details -->
+        </div>
+      </div>
+    </section>
+
+    <!-- CUSTOM REQUEST -->
+    <section id="custom" class="section">
+      <div class="container">
+        <h2>Request a Custom Puzzle</h2>
+        <p>
+          Want a puzzle of your own artwork, logo, or a special theme?
+          I can design a custom 3D puzzle based on your idea.
+        </p>
+        <p>
+          Most custom puzzles range from <strong>$25–$80</strong>, depending on
+          size, number of pieces, and complexity.
+        </p>
+
+        <!-- Option A: simple mailto form -->
+        <form class="request-form"
+              action="mailto:your-email@example.com"
+              method="post"
+              enctype="text/plain">
+          <div class="form-row">
+            <label for="name">Name*</label>
+            <input id="name" name="Name" type="text" required />
+          </div>
+
+          <div class="form-row">
+            <label for="email">Email*</label>
+            <input id="email" name="Email" type="email" required />
+          </div>
+
+          <div class="form-row">
+            <label for="size">Preferred Size</label>
+            <select id="size" name="Preferred Size">
+              <option value="">Select one</option>
+              <option>Small (up to 5")</option>
+              <option>Medium (5"–8")</option>
+              <option>Large (8"+)</option>
+            </select>
+          </div>
+
+          <div class="form-row">
+            <label for="pieces">Approximate Piece Count</label>
+            <select id="pieces" name="Piece Count">
+              <option value="">Select one</option>
+              <option>Under 50 pieces</option>
+              <option>50–100 pieces</option>
+              <option>100+ pieces</option>
+            </select>
+          </div>
+
+          <div class="form-row">
+            <label for="idea">Puzzle Idea / Theme*</label>
+            <textarea id="idea" name="Puzzle Idea" rows="4" required
+              placeholder="Describe your idea, colors, and any reference image."></textarea>
+          </div>
+
+          <div class="form-row">
+            <label for="budget">Budget (optional)</label>
+            <input id="budget" name="Budget" type="text" placeholder="$40–$60, etc." />
+          </div>
+
+          <button type="submit" class="btn-primary">Send Request</button>
+        </form>
+
+        <!-- If you prefer a separate link instead of a form, you could replace the form with:
+        <a href="https://your-form-link-here" class="btn-primary">
+          Open Custom Puzzle Request Form
+        </a>
+        -->
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact" class="section section-alt">
+      <div class="container">
+        <h2>Contact</h2>
+        <p>
+          Have questions about a puzzle, bulk orders, or collaborations?
+          Reach out anytime:
+        </p>
+        <p>
+          Email:
+          <a href="mailto:your-email@example.com">your-email@example.com</a>
+        </p>
+        <p class="small">
+          © <span id="year"></span> Anaya Reversed™ 3D Puzzles. All rights reserved.
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // Simple script to keep the year current
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
