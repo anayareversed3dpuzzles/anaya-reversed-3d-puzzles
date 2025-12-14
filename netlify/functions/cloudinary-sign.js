@@ -40,6 +40,7 @@ exports.handler = async (event) => {
     const paramsToSign = {
       timestamp,
       folder: "puzzle-requests",
+      source: "uw";
     };
 
     const signature = signParams(paramsToSign, apiSecret);
