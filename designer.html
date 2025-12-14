@@ -70,7 +70,7 @@
 <!-- Cloudinary Upload Widget (loads from Cloudinary) -->
 <script src="https://widget.cloudinary.com/v2.0/global/all.js"></script>
 <script>
-  let uploadedImage = null;
+  let uploadedImageInfo = null;
 
   async function getSignature() {
     const res = await fetch("/.netlify/functions/cloudinary-sign", {
@@ -78,9 +78,54 @@
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ folder: "puzzle-requests" })
     });
-
     if (!res.ok) throw new Error("Failed to get upload signature");
     return res.json();
+  }
+
+  async function fetchQuote() {
+    const size = document.getElementById("sizeSelect").value;
+
+    const payload = {
+      size,
+      pieces: 100,
+      addons: {
+        multicolor: document.getElementById("addonMulticolor").checked,
+        cleanup: document.getElementById("addonCleanup").checked,
+        rush: document.getElementById("addonRush").checked,
+      },
+      // If user uploaded, pass Cloudinary metadata for quality checks
+      image: uploadedImageInfo ? {
+        format: uploadedImageInfo.format,
+        width: uploadedImageInfo.width,
+        height: uploadedImageInfo.height
+      } : {}
+    };
+
+    const res = await fetch("/.netlify/functions/quote", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Quote failed");
+
+    renderQuote(data);
+  }
+
+  function renderQuote(data) {
+    document.getElementById("quoteTotal").textContent = `$${data.total}`;
+
+    const notes = (data.notes || []).join("<br>");
+    document.getElementById("quoteNotes").innerHTML = notes;
+
+    const breakdownHtml = (data.breakdown || [])
+      .map(item => `<div style="display:flex; justify-content:space-between; gap:1rem;">
+          <span>${item.label}</span><span>$${item.amount}</span>
+        </div>`)
+      .join("");
+
+    document.getElementById("quoteBreakdown").innerHTML = breakdownHtml;
   }
 
   async function openUploadWidget() {
@@ -96,39 +141,52 @@
       cloudName: sig.cloudName,
       apiKey: sig.apiKey,
       folder: sig.folder,
-
-      // Important: signed upload
       uploadSignatureTimestamp: sig.timestamp,
       uploadSignature: sig.signature,
 
-      // restrictions (client-side)
       sources: ["local", "camera"],
       multiple: false,
       resourceType: "image",
       clientAllowedFormats: ["png", "jpg", "jpeg"],
-      maxFileSize: 8 * 1024 * 1024, // 8MB
-    }, (error, result) => {
+      maxFileSize: 8 * 1024 * 1024
+    }, async (error, result) => {
       if (error) {
         statusEl.textContent = "Upload failed. Try again.";
         return;
       }
       if (result && result.event === "success") {
-        uploadedImage = result.info;
+        uploadedImageInfo = result.info;
         statusEl.textContent = "Upload complete ✅";
         urlEl.textContent = result.info.secure_url;
+
+        // Refresh quote to show image quality notes
+        try { await fetchQuote(); } catch (e) {}
       }
     });
 
-    statusEl.textContent = "Open upload window…";
     widget.open();
   }
 
+  // Wire events
   document.getElementById("uploadBtn").addEventListener("click", () => {
     openUploadWidget().catch(err => {
       document.getElementById("uploadStatus").textContent = "Error: " + err.message;
     });
   });
+
+  ["sizeSelect","addonMulticolor","addonCleanup","addonRush"].forEach(id => {
+    document.getElementById(id).addEventListener("change", () => {
+      fetchQuote().catch(err => {
+        document.getElementById("quoteNotes").textContent = "Error: " + err.message;
+      });
+    });
+  });
+
+  // Initial quote load (no image yet)
+  fetchQuote().catch(() => {});
 </script>
+
 </body>
 </html>
+
 
