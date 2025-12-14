@@ -43,16 +43,26 @@
     </div>
 
     <div class="product-card">
-      <h3>2) Quote Preview</h3>
-      <p class="subtitle">We’ll add the pricing algorithm next</p>
+      <label class="subtitle">Size</label>
+<select id="sizeSelect" class="btn" style="text-transform:none; letter-spacing:0; padding:0.55rem 0.9rem;">
+  <option value="100">100×100 (100 pcs)</option>
+  <option value="150">150×150 (100 pcs)</option>
+</select>
 
-      <ul class="details">
-        <li><strong>100×100 (100 pcs):</strong> $38</li>
-        <li><strong>150×150 (100 pcs):</strong> $60</li>
-      </ul>
+<div style="height:0.8rem;"></div>
 
-      <div class="price">$—</div>
-      <a class="btn" href="custom.html">Continue to Request Form</a>
+<label class="subtitle">Add-ons</label>
+<div style="display:flex; flex-direction:column; gap:0.4rem; font-size:0.85rem;">
+  <label><input type="checkbox" id="addonMulticolor"> Multi-color (+$5)</label>
+  <label><input type="checkbox" id="addonCleanup"> Image cleanup (+$15)</label>
+  <label><input type="checkbox" id="addonRush"> Rush (+$15)</label>
+</div>
+
+<div id="quoteNotes" class="subtitle" style="margin-top:0.8rem;"></div>
+<div class="price" id="quoteTotal">$—</div>
+
+<div id="quoteBreakdown" style="font-size:0.85rem; opacity:0.9; margin-top:0.5rem;"></div>
+
     </div>
   </div>
 </section>
@@ -121,3 +131,4 @@
 </script>
 </body>
 </html>
+
