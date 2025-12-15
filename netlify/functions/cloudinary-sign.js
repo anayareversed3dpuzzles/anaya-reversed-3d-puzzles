@@ -1,29 +1,22 @@
-// netlify/functions/cloudinary-sign.js
-// Generates a Cloudinary signed upload signature
-
 const crypto = require("crypto");
 
 function signParams(params, apiSecret) {
   const toSign = Object.keys(params)
     .sort()
-    .map((key) => `${key}=${params[key]}`)
+    .map((k) => `${k}=${params[k]}`)
     .join("&");
 
-  return crypto
-    .createHash("sha1")
-    .update(toSign + apiSecret)
-    .digest("hex");
+  return crypto.createHash("sha1").update(toSign + apiSecret).digest("hex");
 }
 
 exports.handler = async (event) => {
-  if (event.httpMethod !== "POST") {
-    return {
-      statusCode: 405,
-      body: "Method Not Allowed",
-    };
-  }
-
   try {
+    if (event.httpMethod !== "POST") {
+      return { statusCode: 405, body: "Method Not Allowed" };
+    }
+
+    const body = JSON.parse(event.body || "{}");
+
     const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
     const apiKey = process.env.CLOUDINARY_API_KEY;
     const apiSecret = process.env.CLOUDINARY_API_SECRET;
@@ -37,28 +30,27 @@ exports.handler = async (event) => {
 
     const timestamp = Math.floor(Date.now() / 1000);
 
+    // MUST include source=uw because the Upload Widget sends it
     const paramsToSign = {
+      folder: body.folder || "puzzle-requests",
+      source: "uw",
       timestamp,
-      folder: "puzzle-requests",
-      source: "uw";
     };
 
     const signature = signParams(paramsToSign, apiSecret);
 
     return {
       statusCode: 200,
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         cloudName,
         apiKey,
         timestamp,
-        folder: paramsToSign.folder,
         signature,
+        folder: paramsToSign.folder,
       }),
     };
   } catch (err) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: err.message }),
-    };
+    return { statusCode: 500, body: JSON.stringify({ error: err.message }) };
   }
 };
