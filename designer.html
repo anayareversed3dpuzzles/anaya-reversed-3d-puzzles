@@ -40,29 +40,27 @@
 
       <div id="uploadStatus" class="subtitle" style="margin-top: 0.8rem;"></div>
       <div id="uploadedUrl" style="word-break: break-word; font-size: 0.8rem; opacity: 0.85;"></div>
+      <div
+        id="imageQualityWarning"
+        style="margin-top: 0.4rem; font-size: 0.9rem;"
+></div>
+
     </div>
 
     <div class="product-card">
-      <label class="subtitle">Size</label>
-<select id="sizeSelect" class="btn" style="text-transform:none; letter-spacing:0; padding:0.55rem 0.9rem;">
-  <option value="100">100×100 (100 pcs)</option>
-  <option value="150">150×150 (100 pcs)</option>
-</select>
+      <h3>2) Quote Preview</h3>
+      <p class="subtitle">We’ll add the pricing algorithm next</p>
 
-<div style="height:0.8rem;"></div>
+      <ul class="details">
+        <li><strong>100×100 (100 pcs):</strong> $38</li>
+        <li><strong>150×150 (100 pcs):</strong> $60</li>
+      </ul>
 
-<label class="subtitle">Add-ons</label>
-<div style="display:flex; flex-direction:column; gap:0.4rem; font-size:0.85rem;">
-  <label><input type="checkbox" id="addonMulticolor"> Multi-color (+$5)</label>
-  <label><input type="checkbox" id="addonCleanup"> Image cleanup (+$15)</label>
-  <label><input type="checkbox" id="addonRush"> Rush (+$15)</label>
-</div>
+      <div class="price" id="priceDisplay">$38</div>
 
-<div id="quoteNotes" class="subtitle" style="margin-top:0.8rem;"></div>
-<div class="price" id="quoteTotal">$—</div>
+      <div id="priceBreakdown" style="margin-top:0.5rem; font-size:0.95rem; opacity:0.9;"></div>
 
-<div id="quoteBreakdown" style="font-size:0.85rem; opacity:0.9; margin-top:0.5rem;"></div>
-
+      <a class="btn" href="custom.html">Continue to Request Form</a>
     </div>
   </div>
 </section>
@@ -70,7 +68,7 @@
 <!-- Cloudinary Upload Widget (loads from Cloudinary) -->
 <script src="https://widget.cloudinary.com/v2.0/global/all.js"></script>
 <script>
-  let uploadedImageInfo = null;
+  let uploadedImage = null;
 
   async function getSignature() {
     const res = await fetch("/.netlify/functions/cloudinary-sign", {
@@ -78,54 +76,9 @@
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ folder: "puzzle-requests" })
     });
+
     if (!res.ok) throw new Error("Failed to get upload signature");
     return res.json();
-  }
-
-  async function fetchQuote() {
-    const size = document.getElementById("sizeSelect").value;
-
-    const payload = {
-      size,
-      pieces: 100,
-      addons: {
-        multicolor: document.getElementById("addonMulticolor").checked,
-        cleanup: document.getElementById("addonCleanup").checked,
-        rush: document.getElementById("addonRush").checked,
-      },
-      // If user uploaded, pass Cloudinary metadata for quality checks
-      image: uploadedImageInfo ? {
-        format: uploadedImageInfo.format,
-        width: uploadedImageInfo.width,
-        height: uploadedImageInfo.height
-      } : {}
-    };
-
-    const res = await fetch("/.netlify/functions/quote", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
-    });
-
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error || "Quote failed");
-
-    renderQuote(data);
-  }
-
-  function renderQuote(data) {
-    document.getElementById("quoteTotal").textContent = `$${data.total}`;
-
-    const notes = (data.notes || []).join("<br>");
-    document.getElementById("quoteNotes").innerHTML = notes;
-
-    const breakdownHtml = (data.breakdown || [])
-      .map(item => `<div style="display:flex; justify-content:space-between; gap:1rem;">
-          <span>${item.label}</span><span>$${item.amount}</span>
-        </div>`)
-      .join("");
-
-    document.getElementById("quoteBreakdown").innerHTML = breakdownHtml;
   }
 
   async function openUploadWidget() {
@@ -141,52 +94,61 @@
       cloudName: sig.cloudName,
       apiKey: sig.apiKey,
       folder: sig.folder,
+
+      // Important: signed upload
       uploadSignatureTimestamp: sig.timestamp,
       uploadSignature: sig.signature,
 
+      // restrictions (client-side)
       sources: ["local", "camera"],
       multiple: false,
       resourceType: "image",
       clientAllowedFormats: ["png", "jpg", "jpeg"],
-      maxFileSize: 8 * 1024 * 1024
-    }, async (error, result) => {
+      maxFileSize: 8 * 1024 * 1024, // 8MB
+    }, (error, result) => {
       if (error) {
         statusEl.textContent = "Upload failed. Try again.";
         return;
       }
       if (result && result.event === "success") {
-        uploadedImageInfo = result.info;
-        statusEl.textContent = "Upload complete ✅";
-        urlEl.textContent = result.info.secure_url;
+        uploadedImage = {
+        url: result.info.secure_url,
+        width: result.info.width,
+        height: result.info.height,
+        format: result.info.format
+      };
 
-        // Refresh quote to show image quality notes
-        try { await fetchQuote(); } catch (e) {}
-      }
+      statusEl.textContent = "Upload complete ✅";
+      urlEl.textContent = uploadedImage.url;
+
+      console.log("Uploaded image:", uploadedImage);
+
+      // ✅ STEP 2 — IMAGE QUALITY CHECK
+const minSize = 1200;
+const shortestSide = Math.min(uploadedImage.width, uploadedImage.height);
+const qualityEl = document.getElementById("imageQualityWarning");
+
+if (shortestSide < minSize) {
+  qualityEl.textContent =
+    `⚠️ Low resolution (${uploadedImage.width}×${uploadedImage.height}). ` +
+    `Minimum is ${minSize}px on the shortest side.`;
+  qualityEl.style.color = "#b45309";
+} else {
+  qualityEl.textContent = "✅ Image resolution looks good for printing.";
+  qualityEl.style.color = "#15803d";
+}      
+  }
     });
 
+    statusEl.textContent = "Open upload window…";
     widget.open();
   }
 
-  // Wire events
   document.getElementById("uploadBtn").addEventListener("click", () => {
     openUploadWidget().catch(err => {
       document.getElementById("uploadStatus").textContent = "Error: " + err.message;
     });
   });
-
-  ["sizeSelect","addonMulticolor","addonCleanup","addonRush"].forEach(id => {
-    document.getElementById(id).addEventListener("change", () => {
-      fetchQuote().catch(err => {
-        document.getElementById("quoteNotes").textContent = "Error: " + err.message;
-      });
-    });
-  });
-
-  // Initial quote load (no image yet)
-  fetchQuote().catch(() => {});
 </script>
-
 </body>
 </html>
-
-
