@@ -149,7 +149,39 @@ if (shortestSide < minSize) {
       document.getElementById("uploadStatus").textContent = "Error: " + err.message;
     });
   });
+document.getElementById("continueBtn").addEventListener("click", (e) => {
+  // if you used <a>, prevent instant navigation until we save
+  e.preventDefault();
+
+  const size = document.getElementById("sizeSelect").value; // update id if different
+  const addons = {
+    multicolor: document.getElementById("addonMulticolor")?.checked || false,
+    cleanup: document.getElementById("addonCleanup")?.checked || false,
+    rush: document.getElementById("addonRush")?.checked || false,
+  };
+
+  const priceText = document.getElementById("priceDisplay")?.textContent || "";
+  const total = Number(priceText.replace(/[^0-9.]/g, "")) || 0;
+
+  const draft = {
+    imageUrl: uploadedImage?.secure_url || uploadedImage?.url || "",
+    width: uploadedImage?.width || null,
+    height: uploadedImage?.height || null,
+    format: uploadedImage?.format || "",
+    size,
+    addons,
+    total
+  };
+
+  localStorage.setItem("puzzleDraft", JSON.stringify(draft));
+
+  // go to request page
+  window.location.href = "custom.html";
+});
+
+  
 </script>
 </body>
 </html>
+
 
