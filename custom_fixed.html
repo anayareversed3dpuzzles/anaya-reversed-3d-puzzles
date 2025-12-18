@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Custom Request • Anaya Reversed™ 3D Puzzles</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body class="catalog-body">
+  <header class="site-header">
+    <nav class="nav">
+      <a href="index.html" class="brand">Anaya Reversed™ 3D Puzzles</a>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="catalog.html">Puzzles</a>
+        <a href="designer.html">Designer</a>
+        <a href="custom.html" aria-current="page">Custom Request</a>
+        <a href="contact.html">Contact</a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="catalog-section">
+    <h1>Custom Request</h1>
+    <p class="subtitle">We’ll use your Designer upload + options to pre-fill this form.</p>
+
+    <div class="catalog-grid">
+      <!-- LEFT: Preview -->
+      <section class="product-card">
+        <h3>1) Preview</h3>
+        <p class="subtitle">Your uploaded image + estimate</p>
+
+        <div id="previewWrap" style="margin-top: 0.75rem;">
+          <img id="previewImg" alt="Uploaded image preview" style="max-width:100%; border-radius:12px; display:none;" />
+          <div id="previewMissing" class="subtitle" style="opacity:.8;">
+            No image loaded yet. Go back to the Designer and upload an image.
+          </div>
+        </div>
+
+        <ul class="details" style="margin-top: 1rem;">
+          <li><strong>Size:</strong> <span id="previewSize">—</span></li>
+          <li><strong>Pieces:</strong> <span id="previewPieces">—</span></li>
+          <li><strong>Add-ons:</strong> <span id="previewAddons">—</span></li>
+        </ul>
+
+        <div class="price" style="margin-top: 1rem;">
+          Estimated Total: <span id="previewTotal">$—</span>
+        </div>
+
+        <div style="margin-top: 1rem;">
+          <a class="btn" href="designer.html">Back to Designer</a>
+        </div>
+      </section>
+
+      <!-- RIGHT: Form -->
+      <section class="product-card">
+        <h3>2) Your Info</h3>
+        <p class="subtitle">Submit your request and I’ll follow up with final confirmation.</p>
+
+        <form id="requestForm">
+          <!-- REQUIRED hidden fields for your pipeline -->
+          <input type="hidden" id="imageUrl" name="imageUrl" />
+          <input type="hidden" id="size" name="size" />
+          <input type="hidden" id="pieces" name="pieces" value="100" />
+          <input type="hidden" id="total" name="total" />
+          <input type="hidden" id="addons" name="addons" />
+
+          <label style="display:block; margin-top: 0.75rem;">
+            <div class="subtitle">Name</div>
+            <input id="name" name="name" type="text" required style="width:100%; padding:.6rem; border-radius:10px;">
+          </label>
+
+          <label style="display:block; margin-top: 0.75rem;">
+            <div class="subtitle">Email</div>
+            <input id="email" name="email" type="email" required style="width:100%; padding:.6rem; border-radius:10px;">
+          </label>
+
+          <label style="display:block; margin-top: 0.75rem;">
+            <div class="subtitle">Phone (optional)</div>
+            <input id="phone" name="phone" type="tel" style="width:100%; padding:.6rem; border-radius:10px;">
+          </label>
+
+          <label style="display:block; margin-top: 0.75rem;">
+            <div class="subtitle">Notes (optional)</div>
+            <textarea id="notes" name="notes" rows="4" style="width:100%; padding:.6rem; border-radius:10px;"></textarea>
+          </label>
+
+          <div id="formStatus" class="subtitle" style="margin-top: .9rem; opacity:.9;"></div>
+
+          <button id="submitBtn" class="btn" type="submit" style="margin-top: .75rem;">
+            Submit Request
+          </button>
+        </form>
+
+        <p class="subtitle" style="margin-top: 1rem; opacity:.75;">
+          By submitting, you confirm you own the rights to the image or have permission to use it.
+        </p>
+      </section>
+    </div>
+  </main>
+
+  <script>
+
+    // Loads data that designer.html stored (Step 3 hookup)
+    const dataRaw = localStorage.getItem("puzzleDraft");
+    let data = null;
+
+    try { data = dataRaw ? JSON.parse(dataRaw) : null; } catch (e) { data = null; }
+
+    const $ = (id) => document.getElementById(id);
+function safeParse(s){ try { return JSON.parse(s); } catch(e){ return null; } }
+
+    if (data && data.imageUrl) {
+      // Fill hidden form fields (IDs matter!)
+      $("imageUrl").value = data.imageUrl || "";
+      $("size").value = data.sizeLabel || data.sizeValue || "";
+      $("pieces").value = data.pieces || "100";
+      $("total").value = data.total || "";
+      $("addons").value = (data.addons || []).join(", ");
+
+      // Preview panel
+      $("previewMissing").style.display = "none";
+      $("previewImg").style.display = "block";
+      $("previewImg").src = data.imageUrl;
+
+      $("previewSize").textContent = data.sizeLabel || "—";
+      $("previewPieces").textContent = (data.pieces || "100") + " pcs";
+      $("previewAddons").textContent = (data.addons && Object.keys(data.addons||{}).length) ? Object.keys(data.addons||{}).filter(k=>data.addons[k]).join(", ") : "None";
+      $("previewTotal").textContent = data.total ? ("$" + data.total) : "$—";
+    }
+
+    // Temporary: just prevents page refresh until we wire the Netlify submit function
+    $("requestForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const status = $("formStatus");
+      if (status) status.textContent = "Submitting…";
+
+      // Build payload from the form + designer draft
+      const draft = safeParse(localStorage.getItem("puzzleDraft")) || {};
+      const payload = {
+        name: ($("name")?.value || "").trim(),
+        email: ($("email")?.value || "").trim(),
+        phone: ($("phone")?.value || "").trim(),
+        notes: ($("notes")?.value || "").trim(),
+        // from Designer
+        imageUrl: draft.imageUrl || "",
+        width: draft.width || "",
+        height: draft.height || "",
+        format: draft.format || "",
+        size: draft.size || "",
+        pieces: draft.pieces || "",
+        addons: draft.addons || {},
+        total: draft.total || "",
+        // optional: store where it came from
+        source: "custom.html",
+        submittedAt: new Date().toISOString()
+      };
+
+      try {
+        const res = await fetch("/.netlify/functions/submit", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        const text = await res.text();
+        if (!res.ok) throw new Error(`${res.status} ${res.statusText}: ${text}`);
+
+        if (status) status.textContent = "✅ Submitted! Check your email for confirmation.";
+        // Optional: clear draft after successful submit
+        // localStorage.removeItem("puzzleDraft");
+      } catch (err) {
+        console.error(err);
+        if (status) status.textContent = "❌ Submit failed: " + err.message;
+      }
+    });
+
+
+</script>
+</body>
+</html>
