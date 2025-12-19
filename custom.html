@@ -101,161 +101,119 @@
   </main>
 
   <script>
-    // Loads data that designer.html stored (Step 3 hookup)
-    const dataRaw = localStorage.getItem("puzzleRequest");
-    let data = null;
-
-    try { data = dataRaw ? JSON.parse(dataRaw) : null; } catch (e) { data = null; }
-
+    // Custom Request page: reads the saved draft from designer.html and submits to Netlify Function -> Google Apps Script
     const $ = (id) => document.getElementById(id);
 
-    if (data && data.imageUrl) {
-      // Fill hidden form fields (IDs matter!)
-      $("imageUrl").value = data.imageUrl || "";
-      $("size").value = data.sizeLabel || data.sizeValue || "";
-      $("pieces").value = data.pieces || "100";
-      $("total").value = data.total || "";
-      $("addons").value = (data.addons || []).join(", ");
-
-      // Preview panel
-      $("previewMissing").style.display = "none";
-      $("previewImg").style.display = "block";
-      $("previewImg").src = data.imageUrl;
-
-      $("previewSize").textContent = data.sizeLabel || "—";
-      $("previewPieces").textContent = (data.pieces || "100") + " pcs";
-      $("previewAddons").textContent = (data.addons && data.addons.length) ? data.addons.join(", ") : "None";
-      $("previewTotal").textContent = data.total ? ("$" + data.total) : "$—";
+    function loadDraft() {
+      const keys = ["puzzleRequest", "puzzle_request", "puzzleDraft", "puzzle_draft"];
+      for (const k of keys) {
+        const raw = localStorage.getItem(k);
+        if (!raw) continue;
+        try { return JSON.parse(raw); } catch (e) {}
+      }
+      return null;
     }
 
-    // Temporary: just prevents page refresh until we wire the Netlify submit function
-    $("requestForm").addEventListener("submit", (e) => {
+    function money(n) {
+      const num = Number(n);
+      if (!Number.isFinite(num)) return "";
+      return "$" + num.toFixed(0);
+    }
+
+    const draft = loadDraft();
+
+    // Populate preview + hidden fields
+    if (draft && draft.imageUrl) {
+      const img = document.createElement("img");
+      img.src = draft.imageUrl;
+      img.alt = "Uploaded image preview";
+      img.style.maxWidth = "220px";
+      img.style.borderRadius = "12px";
+      img.style.border = "1px solid rgba(255,255,255,.18)";
+      img.style.display = "block";
+      img.style.marginTop = "0.75rem";
+      $("previewWrap").appendChild(img);
+
+      $("previewHint").textContent = "";
+      $("previewSize").textContent = draft.sizeLabel || draft.size || draft.sizeValue || "—";
+      $("previewPieces").textContent = String(draft.pieces || "—");
+      $("previewAddons").textContent = (draft.addons && draft.addons.length) ? draft.addons.join(", ") : "—";
+      $("previewTotal").textContent = draft.total ? money(draft.total) : "—";
+
+      // Hidden fields that get POSTed
+      $("imageUrl").value = draft.imageUrl || "";
+      $("size").value = draft.sizeLabel || draft.size || draft.sizeValue || "";
+      $("pieces").value = String(draft.pieces || "");
+      $("addons").value = JSON.stringify(draft.addons || []);
+      $("total").value = String(draft.total || "");
+      $("width").value = String(draft.width || "");
+      $("height").value = String(draft.height || "");
+      $("format").value = String(draft.format || "");
+    } else {
+      $("previewHint").textContent = "No image loaded yet. Go back to the Designer and upload an image.";
+    }
+
+    // Submit handler
+    $("requestForm").addEventListener("submit", async (e) => {
       e.preventDefault();
-      $("formStatus").textContent = "✅ Form captured locally. Next step: connect to Netlify submit function / Google Sheet.";
+
+      const payload = {
+        name: $("name").value.trim(),
+        email: $("email").value.trim(),
+        phone: $("phone").value.trim(),
+        notes: $("notes").value.trim(),
+        size: $("size").value.trim(),
+        pieces: $("pieces").value.trim(),
+        total: $("total").value.trim(),
+        imageUrl: $("imageUrl").value.trim(),
+        addons: (() => { try { return JSON.parse($("addons").value || "[]"); } catch { return []; } })(),
+        width: $("width").value.trim(),
+        height: $("height").value.trim(),
+        format: $("format").value.trim(),
+      };
+
+      // Basic required fields (matches submit.js requirements)
+      const missing = [];
+      if (!payload.name) missing.push("name");
+      if (!payload.email) missing.push("email");
+      if (!payload.size) missing.push("size");
+      if (!payload.pieces) missing.push("pieces");
+      if (!payload.total) missing.push("total");
+      if (!payload.imageUrl) missing.push("imageUrl");
+
+      const statusEl = $("formStatus");
+      if (missing.length) {
+        statusEl.textContent = `❌ Missing: ${missing.join(", ")}. (Go back to Designer if size/pieces/total didn't carry over.)`;
+        return;
+      }
+
+      statusEl.textContent = "⏳ Submitting…";
+
+      try {
+        const res = await fetch("/.netlify/functions/submit", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+
+        const text = await res.text();
+        let body;
+        try { body = JSON.parse(text); } catch { body = { raw: text }; }
+
+        if (!res.ok) {
+          statusEl.textContent = `❌ Submit failed: ${res.status} • ${body.error || body.raw || "Unknown error"}`;
+          return;
+        }
+
+        statusEl.textContent = "✅ Submitted! Your request was sent to the Google Sheet.";
+        // Optional: clear draft so repeat submits don't happen accidentally
+        // localStorage.removeItem("puzzleRequest");
+      } catch (err) {
+        statusEl.textContent = `❌ Submit failed: ${err.message || err}`;
+      }
     });
   </script>
 
-<script>
-  const $ = (id) => document.getElementById(id);
-
-  function normalizeDraft(raw) {
-    if (!raw) return null;
-    let d;
-    try { d = JSON.parse(raw); } catch { return null; }
-    const sizeText = (d.size || d.sizeLabel || d.sizeValue || "").trim();
-
-    let pieces = d.pieces;
-    if (!pieces && sizeText) {
-      const m = sizeText.match(/\((\d+)\s*pcs\)/i);
-      if (m) pieces = Number(m[1]);
-    }
-
-    let addons = d.addons;
-    if (addons && !Array.isArray(addons) && typeof addons === "object") {
-      addons = Object.keys(addons).filter((k) => addons[k]);
-    }
-    if (!addons) addons = [];
-
-    const total = (typeof d.total === "number") ? d.total : (d.total ? Number(String(d.total).replace(/[^0-9.]/g,"")) : null);
-
-    return {
-      imageUrl: d.imageUrl || d.uploadedUrl || d.url || "",
-      size: sizeText,
-      pieces: pieces || null,
-      addons,
-      total: total || null,
-      width: d.width || null,
-      height: d.height || null,
-      format: d.format || null,
-    };
-  }
-
-  function renderDraft(d) {
-    if (!d || !d.imageUrl) {
-      if ($("previewMissing")) $("previewMissing").style.display = "block";
-      if ($("previewWrap")) $("previewWrap").style.display = "none";
-      return;
-    }
-    if ($("previewMissing")) $("previewMissing").style.display = "none";
-    if ($("previewWrap")) $("previewWrap").style.display = "block";
-
-    if ($("previewImg")) $("previewImg").src = d.imageUrl;
-    if ($("previewUrl")) $("previewUrl").textContent = d.imageUrl;
-
-    if ($("previewSize")) $("previewSize").textContent = d.size || "—";
-    if ($("previewPieces")) $("previewPieces").textContent = d.pieces ? String(d.pieces) : "—";
-    if ($("previewAddons")) $("previewAddons").textContent = (d.addons && d.addons.length) ? d.addons.join(", ") : "—";
-    if ($("previewTotal")) $("previewTotal").textContent = d.total ? `$${d.total}` : "—";
-
-    // Hidden fields that submit.js expects
-    if ($("imageUrl")) $("imageUrl").value = d.imageUrl;
-    if ($("size")) $("size").value = d.size || "";
-    if ($("pieces")) $("pieces").value = d.pieces ? String(d.pieces) : "";
-    if ($("addons")) $("addons").value = JSON.stringify(d.addons || []);
-    if ($("total")) $("total").value = d.total ? String(d.total) : "";
-  }
-
-  const draft = normalizeDraft(
-    localStorage.getItem("puzzleDraft") || localStorage.getItem("puzzleRequest")
-  );
-  renderDraft(draft);
-
-  $("backBtn")?.addEventListener("click", (e) => {
-    e.preventDefault();
-    window.location.href = "designer.html";
-  });
-
-  async function submitToNetlify(payload) {
-    const res = await fetch("/.netlify/functions/submit", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-    const text = await res.text();
-    let json;
-    try { json = JSON.parse(text); } catch { json = { raw: text }; }
-    if (!res.ok) throw new Error(`${res.status}: ${JSON.stringify(json)}`);
-    return json;
-  }
-
-  $("requestForm")?.addEventListener("submit", async (e) => {
-    e.preventDefault();
-
-    if ($("formStatus")) {
-      $("formStatus").textContent = "Submitting…";
-      $("formStatus").className = "subtitle";
-      $("formStatus").style.color = "";
-    }
-
-    const payload = {
-      name: $("name")?.value.trim() || "",
-      email: $("email")?.value.trim() || "",
-      phone: $("phone")?.value.trim() || "",
-      notes: $("notes")?.value.trim() || "",
-
-      imageUrl: $("imageUrl")?.value || "",
-      size: $("size")?.value || "",
-      pieces: $("pieces")?.value || "",
-      addons: (() => { try { return JSON.parse($("addons")?.value || "[]"); } catch { return []; } })(),
-      total: $("total")?.value || "",
-
-      company: $("company") ? $("company").value : "",
-    };
-
-    try {
-      await submitToNetlify(payload);
-      if ($("formStatus")) {
-        $("formStatus").textContent = "✅ Submitted! You’ll see a new row in your Google Sheet.";
-        $("formStatus").style.color = "#15803d";
-      }
-    } catch (err) {
-      if ($("formStatus")) {
-        $("formStatus").textContent = `❌ Submit failed: ${err.message}`;
-        $("formStatus").style.color = "#b45309";
-      }
-    }
-  });
-</script>
 
 </body>
 </html>
