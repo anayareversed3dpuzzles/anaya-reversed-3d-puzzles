@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Custom Request • Anaya Reversed™ 3D Puzzles</title>
+  <title>Custom Request • Anaya Reversed 3D Puzzles</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 
@@ -88,9 +88,8 @@
 
           <div id="formStatus" class="subtitle" style="margin-top: .9rem; opacity:.9;"></div>
 
-          <button id="submitBtn" class="btn" type="submit" style="margin-top: .75rem;">
-            Submit Request
-          </button>
+          <button id="submitBtn" class="btn" type="button">Submit Request</button>
+
         </form>
 
         <p class="subtitle" style="margin-top: 1rem; opacity:.75;">
@@ -213,6 +212,85 @@
       }
     });
   </script>
+<script>
+(function () {
+  const form = document.getElementById("requestForm");
+  const submitBtn = document.getElementById("submitBtn");
+  const statusEl = document.getElementById("formStatus");
+
+  if (!form || !submitBtn || !statusEl) {
+    console.error("Missing required elements:", { form, submitBtn, statusEl });
+    return;
+  }
+
+  // IMPORTANT: stop the browser from reloading the page
+  form.addEventListener("submit", (e) => e.preventDefault());
+
+  submitBtn.addEventListener("click", async (e) => {
+    e.preventDefault();
+
+    statusEl.textContent = "Submitting…";
+    statusEl.style.color = "#ddd";
+    submitBtn.disabled = true;
+
+    try {
+      // pull the draft you saved from Designer (adjust key if yours differs)
+      const draftRaw = localStorage.getItem("puzzleRequestDraft") || "{}";
+      const draft = JSON.parse(draftRaw);
+
+      // build payload from form + draft
+      const payload = {
+        name: (document.getElementById("name")?.value || "").trim(),
+        email: (document.getElementById("email")?.value || "").trim(),
+        phone: (document.getElementById("phone")?.value || "").trim(),
+        notes: (document.getElementById("notes")?.value || "").trim(),
+
+        // these usually come from the Designer draft
+        size: draft.size || "",
+        pieces: draft.pieces || "",
+        addons: draft.addons || {},
+        total: draft.total || "",
+        imageUrl: draft.imageUrl || "",
+        width: draft.width || "",
+        height: draft.height || "",
+        format: draft.format || "",
+      };
+
+      // quick client-side validation so it doesn’t silently fail
+      const missing = [];
+      ["name","email","size","pieces","total","imageUrl"].forEach(k => {
+        if (!payload[k] || (typeof payload[k] === "string" && payload[k].trim() === "")) missing.push(k);
+      });
+      if (missing.length) {
+        throw new Error("Missing required fields: " + missing.join(", "));
+      }
+
+      const res = await fetch("/.netlify/functions/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const text = await res.text();
+      if (!res.ok) throw new Error(`Submit failed ${res.status}: ${text}`);
+
+      // Only clear AFTER success
+      localStorage.removeItem("puzzleRequestDraft");
+
+      statusEl.textContent = "✅ Request submitted! Check your Google Sheet.";
+      statusEl.style.color = "#7CFC98";
+      form.reset();
+
+    } catch (err) {
+      console.error(err);
+      statusEl.textContent = "❌ " + (err?.message || "Unknown error");
+      statusEl.style.color = "#ff6b6b";
+    } finally {
+      submitBtn.disabled = false;
+    }
+  });
+})();
+</script>
 
 
 </body>
