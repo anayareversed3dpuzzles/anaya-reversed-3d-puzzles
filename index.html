@@ -340,22 +340,64 @@
   <div class="bg-overlay"></div>
 
   <!-- Vertical side text like Project B -->
-  <div class="side-text left">CUSTOM 3D JIGSAW PUZZLES • DESKTOP ART • LIMITED DROPS</div>
-  <div class="side-text right">ANAYA REVERSED™ • NEW RELEASES COMING SOON</div>
+  <div class="side-text left">CUSTOM 3D JIGSAW PUZZLES</div>
+  <div class="side-text right">ANAYA REVERSED 3D Puzzles</div>
 
   <main class="page">
     <header class="top-bar">
       <div class="brand-small">ANAYA REVERSED 3D PUZZLES</div>
       <div class="link-right">
-        <!-- send users to your catalog page -->
-        <a href="catalog.html">View Puzzle Gallery</a>
       </div>
     </header>
 
     <section class="hero">
       <div class="hero-logo">
+      <section class="hero-form-wrap">
+  <form
+    class="hero-form"
+    name="puzzle-feedback"
+    method="POST"
+    data-netlify="true"
+    data-netlify-honeypot="bot-field">
+
+    <!-- Required for Netlify -->
+    <input type="hidden" name="form-name" value="puzzle-feedback">
+
+    <!-- Honeypot -->
+    <p style="display:none;">
+      <label>Don’t fill this out: <input name="bot-field"></label>
+    </p>
+
+    <input
+      type="text"
+      name="code"
+      placeholder="Puzzle code (optional)"
+      style="text-transform:uppercase;">
+
+    <select name="rating" required>
+      <option value="" disabled selected>Rating</option>
+      <option value="5">5 – Loved it</option>
+      <option value="4">4 – Great</option>
+      <option value="3">3 – Okay</option>
+      <option value="2">2 – Needs work</option>
+      <option value="1">1 – Not for me</option>
+    </select>
+
+    <textarea
+      name="comment"
+      required
+      placeholder="What did you think about the puzzle?"></textarea>
+
+    <button type="submit">Send Feedback</button>
+  </form>
+
+  <div class="hero-form-note">
+    No login required • Helps improve future puzzle drops
+  </div>
+</section>
+
         <!-- make sure this path matches your logo location -->
-        <img src="C:\Anaya Reversed Site\images\bizlogo.png" alt="Anaya Reversed 3D Puzzles Logo">
+        <img src="bizlogo.png" alt="Anaya Reversed 3D Puzzles Logo">
       </div>
 
       <h1 class="hero-title">3D PUZZLES</h1>
@@ -366,19 +408,7 @@
         Follow along as new drops, collabs, and custom requests go live.
       </p>
 
-      <div class="hero-form-wrap">
-        <form class="hero-form" action="#" method="post">
-          <input type="email"
-                 name="email"
-                 placeholder="Enter your email and score early access"
-                 required>
-          <button type="submit">Let’s Go</button>
-        </form>
-        <div class="hero-form-note">
-          No spam. Just puzzle drops & updates.
-        </div>
-      </div>
-
+     
       <div class="social-row">
         <a class="social-btn" href="https://www.tiktok.com/anayareversed3dpuzzles" target="_blank" rel="noopener">
           <i class="fab fa-tiktok"></i>
@@ -394,8 +424,9 @@
     </section>
 
     <footer class="footer">
-      © 2025 Anaya Reversed™ 3D Puzzles. All rights reserved.
+      © 2025 Anaya Reversed 3D Puzzles. All rights reserved.
     </footer>
   </main>
 </body>
 </html>
+
