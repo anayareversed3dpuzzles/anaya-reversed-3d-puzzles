@@ -359,7 +359,18 @@
   Premium 3D-printed jigsaw puzzles designed for desks, gifts, and collectors.
   Follow along as new drops, collabs, and custom requests go live.
 </p>
+
 <section class="hero-form-wrap">
+
+  <!-- Short guidance header -->
+  <div class="form-intro">
+    <h2 class="form-title">You found a puzzle drop 🎯</h2>
+    <p class="form-subtitle">
+      If you have 20 seconds, leave feedback to help improve future puzzles.
+      <strong>No login required.</strong>
+    </p>
+  </div>
+
   <form
     class="hero-form"
     name="puzzle-feedback"
@@ -367,7 +378,7 @@
     data-netlify="true"
     data-netlify-honeypot="bot-field">
 
-    <!-- Netlify form name -->
+    <!-- Required for Netlify -->
     <input type="hidden" name="form-name" value="puzzle-feedback">
 
     <!-- Honeypot (spam protection) -->
@@ -375,33 +386,9 @@
       <label>Don’t fill this out: <input name="bot-field"></label>
     </p>
 
-    <input
-      type="text"
-      name="code"
-      placeholder="Puzzle code (optional)"
-      style="text-transform: uppercase;">
-
-    <select name="rating" required>
-      <option value="" disabled selected>Rating</option>
-      <option value="5">5 – Loved it</option>
-      <option value="4">4 – Great</option>
-      <option value="3">3 – Okay</option>
-      <option value="2">2 – Needs work</option>
-      <option value="1">1 – Not for me</option>
-    </select>
-
-    <textarea
-      name="comment"
-      required
-      placeholder="What did you think about the puzzle?"></textarea>
-
-    <button type="submit">Send Feedback</button>
-  </form>
-
-  <div class="hero-form-note">
-    No login required • Helps improve future puzzle drops
-  </div>
-</section>
+    <!-- Puzzle code -->
+    <div class="field">
+      <label>Puzzle code <span class="optional">(optiona
 
 
 
@@ -434,5 +421,6 @@
   </main>
 </body>
 </html>
+
 
 
