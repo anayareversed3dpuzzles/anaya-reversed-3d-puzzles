@@ -351,8 +351,15 @@
     </header>
 
     <section class="hero">
-      <div class="hero-logo">
-      <section class="hero-form-wrap">
+      
+<div class="hero-logo">
+  <img src="bizlogo.png" alt="Anaya Reversed 3D Puzzles Logo">
+</div>
+      <p class="hero-subtext">
+  Premium 3D-printed jigsaw puzzles designed for desks, gifts, and collectors.
+  Follow along as new drops, collabs, and custom requests go live.
+</p>
+<section class="hero-form-wrap">
   <form
     class="hero-form"
     name="puzzle-feedback"
@@ -360,10 +367,10 @@
     data-netlify="true"
     data-netlify-honeypot="bot-field">
 
-    <!-- Required for Netlify -->
+    <!-- Netlify form name -->
     <input type="hidden" name="form-name" value="puzzle-feedback">
 
-    <!-- Honeypot -->
+    <!-- Honeypot (spam protection) -->
     <p style="display:none;">
       <label>Don’t fill this out: <input name="bot-field"></label>
     </p>
@@ -372,7 +379,7 @@
       type="text"
       name="code"
       placeholder="Puzzle code (optional)"
-      style="text-transform:uppercase;">
+      style="text-transform: uppercase;">
 
     <select name="rating" required>
       <option value="" disabled selected>Rating</option>
@@ -396,9 +403,7 @@
   </div>
 </section>
 
-        <!-- make sure this path matches your logo location -->
-        <img src="bizlogo.png" alt="Anaya Reversed 3D Puzzles Logo">
-      </div>
+
 
       <h1 class="hero-title">3D PUZZLES</h1>
       <p class="hero-tagline">Custom desktop jigsaw puzzles • 3d printed</p>
@@ -429,4 +434,5 @@
   </main>
 </body>
 </html>
+
 
