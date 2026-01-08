@@ -197,12 +197,10 @@
     </div>
 
     <form
-      class="feedback-form"
-      name="puzzle-feedback"
-      method="POST"
-      data-netlify="true"
-      data-netlify-honeypot="bot-field">
-
+      class="feedback-form" id="feedbackForm">
+      
+     
+      
       <input type="hidden" name="form-name" value="puzzle-feedback">
 
       <p style="display:none;">
@@ -250,6 +248,45 @@
       © 2025 ANAYA REVERSED 3D PUZZLES. ALL RIGHTS RESERVED.
     </footer>
   </main>
+  <script>
+  const form = document.getElementById("feedbackForm");
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const button = form.querySelector("button[type='submit']");
+    button.disabled = true;
+    button.textContent = "Sending...";
+
+    const data = Object.fromEntries(new FormData(form));
+
+    try {
+      const res = await fetch("/.netlify/functions/submitFeedback", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      });
+
+      if (!res.ok) throw new Error("Request failed");
+
+      form.innerHTML = `
+        <div style="text-align:center; padding:1rem;">
+          <div style="font-size:1.1rem; font-weight:700;">✅ Thanks!</div>
+          <div style="opacity:0.8; margin-top:0.4rem;">
+            Your feedback was submitted successfully.
+          </div>
+        </div>
+      `;
+    } catch (err) {
+      console.error(err);
+      button.disabled = false;
+      button.textContent = "Send feedback";
+      alert("Something went wrong. Please try again.");
+    }
+  });
+</script>
+
 </body>
 </html>
+
 
