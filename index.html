@@ -249,52 +249,7 @@
     </footer>
   </main>
   <script>
-   const params = new URLSearchParams(window.location.search);
-  const codeFromUrl = params.get("code");
-
-  if (codeFromUrl) {
-    const codeInput = document.querySelector('input[name="code"]');
-    if (codeInput) {
-      codeInput.value = codeFromUrl.toUpperCase().trim();
-    }
-  }
-
-  // STEP 7: Handle form submission
-  const form = document.getElementById("feedbackForm");
-
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
-
-    const button = form.querySelector("button[type='submit']");
-    button.disabled = true;
-    button.textContent = "Sending...";
-
-    const data = Object.fromEntries(new FormData(form));
-
-    try {
-      const res = await fetch("/.netlify/functions/submitFeedback", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data)
-      });
-
-      if (!res.ok) throw new Error("Request failed");
-
-      form.innerHTML = `
-        <div style="text-align:center; padding:1rem;">
-          <div style="font-size:1.1rem; font-weight:700;">✅ Thanks!</div>
-          <div style="opacity:0.8; margin-top:0.4rem;">
-            Your feedback was submitted successfully.
-          </div>
-        </div>
-      `;
-    } catch (err) {
-      console.error(err);
-      button.disabled = false;
-      button.textContent = "Send feedback";
-      alert("Something went wrong. Please try again.");
-    }
-  });
+  
     
   const form = document.getElementById("feedbackForm");
 
@@ -335,6 +290,7 @@
 
 </body>
 </html>
+
 
 
 
