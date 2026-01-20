@@ -4,71 +4,129 @@
   <meta charset="UTF-8" />
   <title>About • Anaya Reversed 3D Puzzles</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="stylesheet" href="styles.css" />
-</head>
-<body class="page-dark">
-  <header class="site-header">
-    <div class="header-left">
-      <a href="index.html" class="brand">
-        <img src="bizlogo.png" alt="Anaya Reversed 3D Puzzles logo" class="brand-logo" />
-        <span class="brand-name">Anaya Reversed 3D Puzzles</span>
-      </a>
-    </div>
-    <nav class="main-nav">
-      <a href="index.html">Puzzle Drop</a>
-      <a href="about.html" class="active-nav">About</a>
-    </nav>
-  </header>
 
-  <main class="page-container">
-    <section class="about-card">
-      <h1>About Anaya Reversed 3D Puzzles</h1>
-      <p class="about-intro">
-        Hi, I’m Ayana 👋 I design and 3D-print small jigsaw puzzles meant for desks,
-        gifts, and collectors. This project started as a fun way for me to combine
-        my love of tech, sports, and puzzles into something people can actually hold.
+  <!-- Same font as index -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: "Space Grotesk", system-ui, sans-serif;
+      background: #050608;
+      color: #f7f7f7;
+      min-height: 100vh;
+    }
+
+    main {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem;
+    }
+
+    .brand {
+      text-align: center;
+      font-size: 0.75rem;
+      letter-spacing: 0.25em;
+      opacity: 0.85;
+      margin-bottom: 1.5rem;
+    }
+
+    .card {
+      background: rgba(0,0,0,0.55);
+      border: 1px solid rgba(255,255,255,0.7);
+      border-radius: 1.25rem;
+      padding: 1.75rem;
+      backdrop-filter: blur(8px);
+    }
+
+    h1 {
+      font-size: 1.2rem;
+      margin-bottom: 0.75rem;
+    }
+
+    h2 {
+      font-size: 0.85rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      margin-top: 1.6rem;
+      margin-bottom: 0.4rem;
+      opacity: 0.9;
+    }
+
+    p {
+      font-size: 0.9rem;
+      line-height: 1.6;
+      opacity: 0.9;
+      margin-bottom: 0.75rem;
+    }
+
+    ul {
+      padding-left: 1.1rem;
+      margin-top: 0.5rem;
+    }
+
+    li {
+      font-size: 0.9rem;
+      margin-bottom: 0.4rem;
+    }
+
+    .back {
+      display: inline-block;
+      margin-top: 1.6rem;
+      font-size: 0.7rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: #f7f7f7;
+      opacity: 0.75;
+    }
+
+    .back:hover {
+      opacity: 1;
+    }
+  </style>
+</head>
+
+<body>
+  <main>
+    <div class="brand">ANAYA REVERSED 3D PUZZLES</div>
+
+    <section class="card">
+      <h1>About This Project</h1>
+
+      <p>
+        Hi, I’m Ayana. Anaya Reversed 3D Puzzles is a small passion project where I
+        design and 3D-print jigsaw puzzles meant for desks, gifts, and collectors.
+        What started as a hobby slowly turned into something I wanted to share.
       </p>
 
-      <h2>The meaning behind the name</h2>
+      <h2>The name</h2>
       <p>
-        <strong>“Anaya Reversed”</strong> comes from my mom’s maiden name, 
-        Anaya. Interestingly, when you spell it backward, it becomes my name—Ayana. 
+        "Anaya Reversed" comes from my mom’s maiden name, Anaya. 
+        Interestingly, when you spell it backward, it becomes my name—Ayana. 
         Over the years, people have often mixed the two up and called me Anaya anyway, so the connection has always been there. 
         Anaya Reversed 3D Puzzles felt like the perfect name: a personal nod to family, identity, and seeing things from a different perspective—just like a puzzle.
-        <!-- If you have a specific story or deeper meaning, replace this paragraph
-             with your own explanation. -->
       </p>
 
       <h2>A little about me</h2>
-      <ul class="about-list">
-        <li>🎓 I have a Bachelor of Scienec degree in<strong>Computer Science</strong></li>
-        <li>🏈🏀 I’m a big <strong>sports fan</strong> and you’ll see that in a lot of my puzzle themes and designs.</li>
-        <li>🧩 3D-printed jigsaw puzzles started as a <strong>hobby</strong> and turned into a small passion project I share through “puzzle drops.” I am also using my technical skills to build my own website</li>
+      <ul>
+        <li>🎓 I have a degree in <strong>Computer Science</strong></li>
+        <li>🏈 I’m a big <strong>sports fan</strong>, which often inspires puzzle themes</li>
+        <li>🧩 3D-printed jigsaw puzzles started as a <strong>creative hobby</strong></li>
       </ul>
 
-      <h2>What this site is for</h2>
+      <h2>Why feedback matters</h2>
       <p>
-        Right now this site is a simple place to collect feedback from people who
-        find my puzzle drops. Your comments help me decide which ideas to keep,
-        which designs to improve, and what kinds of themes to try next.
+        This site exists mainly to collect feedback from people who find my puzzle
+        drops. Your comments help guide future designs, difficulty levels, and
+        the ideas I choose to experiment with next.
       </p>
 
-      <p>
-        Thanks for taking a moment to share your thoughts—it really does help shape
-        the next round of puzzles. Solve and pass along!
-      </p>
-
-      <a href="index.html" class="primary-button">Back to Puzzle Feedback</a>
+      <a class="back" href="index.html">← Back to puzzle feedback</a>
     </section>
   </main>
-
-  <footer class="site-footer">
-    <p>© <span id="year"></span> Anaya Reversed 3D Puzzles</p>
-  </footer>
-
-  <script>
-    // Simple script to keep the footer year up to date
-    document.getElementById('year').textContent = new Date().getFullYear();
-  </script>
 </body>
 </html>
