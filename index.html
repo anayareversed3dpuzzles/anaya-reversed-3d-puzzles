@@ -18,20 +18,6 @@
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
-    <header class="site-header">
-  <div class="header-left">
-    <a href="index.html" class="brand">
-      <img src="bizlogo.png" alt="Anaya Reversed 3D Puzzles logo" class="brand-logo" />
-      <span class="brand-name">Anaya Reversed 3D Puzzles</span>
-    </a>
-  </div>
-  <nav class="main-nav">
-    <a href="index.html" class="active-nav">Puzzle Drop</a>
-    <a href="about.html">About</a>
-  </nav>
-</header>
-
-
     body {
       font-family: "Space Grotesk", system-ui, sans-serif;
       background: #050608;
@@ -51,7 +37,7 @@
     .brand {
       letter-spacing: 0.25em;
       font-size: 0.75rem;
-      margin-bottom: 1.25rem;
+      margin-bottom: 0.75rem;
       opacity: 0.9;
     }
 
@@ -194,6 +180,21 @@
   <main class="page">
     <div class="brand">ANAYA REVERSED 3D PUZZLES</div>
 
+    <!-- New About link (simple nav) -->
+    <nav style="margin-bottom: 1.2rem;">
+      <a href="about.html"
+         style="
+           font-size: 0.65rem;
+           letter-spacing: 0.22em;
+           text-transform: uppercase;
+           opacity: 0.7;
+           text-decoration: none;
+           color: #f7f7f7;
+         ">
+        About
+      </a>
+    </nav>
+
     <div class="hero-logo">
       <img src="bizlogo.png" alt="Anaya Reversed 3D Puzzles Logo">
     </div>
@@ -210,11 +211,7 @@
       </div>
     </div>
 
-    <form
-      class="feedback-form" id="feedbackForm">
-      
-     
-      
+    <form class="feedback-form" id="feedbackForm">
       <input type="hidden" name="form-name" value="puzzle-feedback">
 
       <p style="display:none;">
@@ -262,53 +259,43 @@
       © 2025 ANAYA REVERSED 3D PUZZLES. ALL RIGHTS RESERVED.
     </footer>
   </main>
+
   <script>
-  
-    
-  const form = document.getElementById("feedbackForm");
+    const form = document.getElementById("feedbackForm");
 
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
 
-    const button = form.querySelector("button[type='submit']");
-    button.disabled = true;
-    button.textContent = "Sending...";
+      const button = form.querySelector("button[type='submit']");
+      button.disabled = true;
+      button.textContent = "Sending...";
 
-    const data = Object.fromEntries(new FormData(form));
+      const data = Object.fromEntries(new FormData(form));
 
-    try {
-      const res = await fetch("/.netlify/functions/submitFeedback", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data)
-      });
+      try {
+        const res = await fetch("/.netlify/functions/submitFeedback", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data)
+        });
 
-      if (!res.ok) throw new Error("Request failed");
+        if (!res.ok) throw new Error("Request failed");
 
-      form.innerHTML = `
-        <div style="text-align:center; padding:1rem;">
-          <div style="font-size:1.1rem; font-weight:700;">✅ Thanks!</div>
-          <div style="opacity:0.8; margin-top:0.4rem;">
-            Your feedback was submitted successfully.
+        form.innerHTML = `
+          <div style="text-align:center; padding:1rem;">
+            <div style="font-size:1.1rem; font-weight:700;">✅ Thanks!</div>
+            <div style="opacity:0.8; margin-top:0.4rem;">
+              Your feedback was submitted successfully.
+            </div>
           </div>
-        </div>
-      `;
-    } catch (err) {
-      console.error(err);
-      button.disabled = false;
-      button.textContent = "Send feedback";
-      alert("Something went wrong. Please try again.");
-    }
-  });
-</script>
-
+        `;
+      } catch (err) {
+        console.error(err);
+        button.disabled = false;
+        button.textContent = "Send feedback";
+        alert("Something went wrong. Please try again.");
+      }
+    });
+  </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
