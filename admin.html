@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin Dashboard – Anaya Reversed 3D Puzzles</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Reuse your main styles -->
+  <link rel="stylesheet" href="styles.css" />
+
+  <style>
+    /* Dashboard-specific styling (kept here so you don't have to dig in styles.css yet) */
+    body {
+      background-color: #0b1120; /* dark slate */
+      color: #e5e7eb;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .admin-shell {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 1.5rem 1rem 3rem;
+    }
+
+    .admin-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      gap: 1rem;
+    }
+
+    .admin-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+    }
+
+    .admin-badge {
+      font-size: 0.8rem;
+      background: #1f2937;
+      border-radius: 999px;
+      padding: 0.25rem 0.75rem;
+      border: 1px solid #374151;
+    }
+
+    .admin-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .admin-card {
+      background: #020617;
+      border-radius: 0.75rem;
+      border: 1px solid #1e293b;
+      padding: 1rem 1.1rem;
+      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.8);
+    }
+
+    .admin-card small {
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      letter-spacing: 0.06em;
+      color: #9ca3af;
+    }
+
+    .admin-card-value {
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin-top: 0.35rem;
+    }
+
+    .admin-card-note {
+      font-size: 0.8rem;
+      color: #9ca3af;
+      margin-top: 0.25rem;
+    }
+
+    .admin-section-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin: 1.5rem 0 0.75rem;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      border-radius: 0.75rem;
+      border: 1px solid #1e293b;
+      background: #020617;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      font-size: 0.9rem;
+    }
+
+    thead {
+      background: #020617;
+    }
+
+    th, td {
+      padding: 0.6rem 0.75rem;
+      text-align: left;
+      border-bottom: 1px solid #111827;
+    }
+
+    th {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #9ca3af;
+    }
+
+    tbody tr:hover {
+      background: #020617;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.15rem 0.6rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      border: 1px solid #4b5563;
+    }
+
+    .pill-success {
+      border-color: #16a34a;
+      color: #bbf7d0;
+      background: rgba(22, 163, 74, 0.15);
+    }
+
+    .pill-warning {
+      border-color: #eab308;
+      color: #fef9c3;
+      background: rgba(234, 179, 8, 0.12);
+    }
+
+    .pill-error {
+      border-color: #ef4444;
+      color: #fecaca;
+      background: rgba(239, 68, 68, 0.12);
+    }
+
+    .logs-list {
+      list-style: none;
+      padding-left: 0;
+      margin: 0;
+    }
+
+    .logs-item {
+      padding: 0.55rem 0.2rem;
+      border-bottom: 1px dashed #111827;
+      font-size: 0.86rem;
+      display: flex;
+      align-items: baseline;
+      gap: 0.6rem;
+    }
+
+    .logs-timestamp {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 0.75rem;
+      color: #9ca3af;
+      min-width: 6.5rem;
+    }
+
+    .logs-level {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 0.12rem 0.5rem;
+      border-radius: 999px;
+    }
+
+    .logs-level-info {
+      background: #1d4ed8;
+      color: #dbeafe;
+    }
+
+    .logs-level-error {
+      background: #b91c1c;
+      color: #fee2e2;
+    }
+
+    .logs-level-warn {
+      background: #92400e;
+      color: #ffedd5;
+    }
+
+    .logs-message {
+      flex: 1;
+    }
+
+    .admin-top-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      font-size: 0.85rem;
+      color: #9ca3af;
+    }
+
+    .admin-top-nav a {
+      color: #93c5fd;
+      text-decoration: none;
+    }
+
+    .admin-top-nav a:hover {
+      text-decoration: underline;
+    }
+
+    .env-pill {
+      padding: 0.18rem 0.6rem;
+      border-radius: 999px;
+      border: 1px solid #4b5563;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: #9ca3af;
+    }
+
+    @media (max-width: 640px) {
+      .admin-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .admin-top-nav {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.4rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="admin-shell">
+    <div class="admin-top-nav">
+      <div>
+        ← <a href="index.html">Back to site</a>
+      </div>
+      <div class="env-pill">ADMIN • INTERNAL VIEW</div>
+    </div>
+
+    <header class="admin-header">
+      <div>
+        <div class="admin-title">Anaya Reversed 3D Puzzles – Admin Dashboard</div>
+        <div class="admin-badge">Monitoring feedback, orders & system health</div>
+      </div>
+      <div>
+        <!-- Placeholder: later this can show logged-in admin name -->
+        <span style="font-size:0.85rem;color:#9ca3af;">Signed in as <strong>Local Admin</strong></span>
+      </div>
+    </header>
+
+    <!-- KPI CARDS -->
+    <section class="admin-grid" id="kpiCards">
+      <!-- JS will fill these -->
+    </section>
+
+    <!-- RECENT FEEDBACK -->
+    <section>
+      <h2 class="admin-section-title">Recent Feedback Submissions</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Submitted</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Type</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="feedbackTableBody">
+            <!-- JS will inject rows here -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- SYSTEM LOGS -->
+    <section>
+      <h2 class="admin-section-title">Latest System Events</h2>
+      <ul class="logs-list" id="logsList">
+        <!-- JS will inject logs here -->
+      </ul>
+    </section>
+  </div>
+
+  <script>
+    // --- Placeholder data (later we'll replace with live Supabase / logging data) ---
+
+    const kpiData = [
+      {
+        label: "Total Feedback (last 30 days)",
+        value: 18,
+        note: "Real value will come from Supabase feedback table."
+      },
+      {
+        label: "Custom Puzzle Requests",
+        value: 7,
+        note: "Includes puzzle uploads & 3D print quotes."
+      },
+      {
+        label: "Errors Captured (today)",
+        value: 0,
+        note: "Hook this into your logging later (console / Sentry)."
+      },
+      {
+        label: "Uptime (last 7 days)",
+        value: "100%",
+        note: "Tie into UptimeRobot/BetterStack when ready."
+      }
+    ];
+
+    const feedbackRows = [
+      {
+        submitted: "2026-02-01 18:42",
+        name: "Test User",
+        email: "test@example.com",
+        type: "Puzzle Feedback",
+        status: "New"
+      },
+      {
+        submitted: "2026-01-30 14:15",
+        name: "Broncos Fan",
+        email: "denver@example.com",
+        type: "Custom NFL Puzzle",
+        status: "In progress"
+      },
+      {
+        submitted: "2026-01-29 09:03",
+        name: "Teacher",
+        email: "teacher@example.com",
+        type: "Bulk classroom order",
+        status: "Completed"
+      }
+    ];
+
+    const logs = [
+      {
+        ts: "18:42:10",
+        level: "info",
+        msg: "Admin dashboard loaded successfully."
+      },
+      {
+        ts: "18:42:11",
+        level: "info",
+        msg: "Fetched 3 demo feedback records (placeholder)."
+      },
+      {
+        ts: "18:42:12",
+        level: "warn",
+        msg: "Supabase connection not configured – using local demo data."
+      },
+      {
+        ts: "18:42:15",
+        level: "info",
+        msg: "Ready to connect real logging & monitoring."
+      }
+    ];
+
+    function renderKPIs() {
+      const container = document.getElementById("kpiCards");
+      container.innerHTML = "";
+      kpiData.forEach(item => {
+        const card = document.createElement("div");
+        card.className = "admin-card";
+        card.innerHTML = `
+          <small>${item.label}</small>
+          <div class="admin-card-value">${item.value}</div>
+          <div class="admin-card-note">${item.note}</div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function renderFeedback() {
+      const tbody = document.getElementById("feedbackTableBody");
+      tbody.innerHTML = "";
+      feedbackRows.forEach(row => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${row.submitted}</td>
+          <td>${row.name}</td>
+          <td>${row.email}</td>
+          <td>${row.type}</td>
+          <td>
+            <span class="pill ${
+              row.status === "Completed"
+                ? "pill-success"
+                : row.status === "In progress"
+                ? "pill-warning"
+                : "pill"
+            }">${row.status}</span>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function renderLogs() {
+      const list = document.getElementById("logsList");
+      list.innerHTML = "";
+      logs.forEach(log => {
+        const li = document.createElement("li");
+        li.className = "logs-item";
+
+        const levelClass =
+          log.level === "error"
+            ? "logs-level-error"
+            : log.level === "warn"
+            ? "logs-level-warn"
+            : "logs-level-info";
+
+        li.innerHTML = `
+          <span class="logs-timestamp">${log.ts}</span>
+          <span class="logs-level ${levelClass}">${log.level}</span>
+          <span class="logs-message">${log.msg}</span>
+        `;
+        list.appendChild(li);
+      });
+    }
+
+    // Initialize dashboard
+    renderKPIs();
+    renderFeedback();
+    renderLogs();
+
+    // Placeholder: later we can add real auth here
+    console.log("Admin dashboard initialized – this is a good place to hook in auth and real data.");
+  </script>
+</body>
+</html>
