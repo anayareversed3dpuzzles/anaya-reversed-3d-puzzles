@@ -4,433 +4,646 @@
   <meta charset="UTF-8" />
   <title>Admin Dashboard – Anaya Reversed 3D Puzzles</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <!-- Reuse your main styles -->
-  <link rel="stylesheet" href="styles.css" />
-
+  <!-- Simple, self-contained styles for the dashboard -->
   <style>
-    /* Dashboard-specific styling (kept here so you don't have to dig in styles.css yet) */
-    body {
-      background-color: #0b1120; /* dark slate */
-      color: #e5e7eb;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    :root {
+      --bg: #050816;
+      --bg-card: #0f172a;
+      --bg-card-soft: #111827;
+      --accent: #38bdf8;
+      --accent-soft: rgba(56, 189, 248, 0.15);
+      --border-subtle: #1f2937;
+      --text-main: #e5e7eb;
+      --text-muted: #9ca3af;
+      --danger: #f97373;
+      --radius-lg: 14px;
+      --shadow-soft: 0 18px 45px rgba(15, 23, 42, 0.7);
     }
 
-    .admin-shell {
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+      background: radial-gradient(circle at top, #1d2438 0, #020617 55%, #000 100%);
+      color: var(--text-main);
+    }
+
+    .page {
       max-width: 1100px;
       margin: 0 auto;
-      padding: 1.5rem 1rem 3rem;
+      padding: 1.5rem 1.25rem 3rem;
     }
 
-    .admin-header {
+    header {
       display: flex;
-      justify-content: space-between;
+      flex-wrap: wrap;
       align-items: center;
-      margin-bottom: 1.5rem;
+      justify-content: space-between;
       gap: 1rem;
+      margin-bottom: 1.75rem;
     }
 
-    .admin-title {
-      font-size: 1.8rem;
+    .brand {
+      display: flex;
+      flex-direction: column;
+      gap: 0.1rem;
+    }
+
+    .brand-title {
+      font-size: 1.4rem;
       font-weight: 700;
-    }
-
-    .admin-badge {
-      font-size: 0.8rem;
-      background: #1f2937;
-      border-radius: 999px;
-      padding: 0.25rem 0.75rem;
-      border: 1px solid #374151;
-    }
-
-    .admin-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 1rem;
-      margin-bottom: 2rem;
-    }
-
-    .admin-card {
-      background: #020617;
-      border-radius: 0.75rem;
-      border: 1px solid #1e293b;
-      padding: 1rem 1.1rem;
-      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.8);
-    }
-
-    .admin-card small {
+      letter-spacing: 0.04em;
       text-transform: uppercase;
-      font-size: 0.75rem;
-      letter-spacing: 0.06em;
-      color: #9ca3af;
     }
 
-    .admin-card-value {
+    .brand-subtitle {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .tag-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.3rem 0.7rem;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      background: var(--accent-soft);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      color: #e0f2fe;
+    }
+
+    .tag-pill-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: #22c55e;
+    }
+
+    .top-links {
+      display: flex;
+      gap: 0.6rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      border-radius: 999px;
+      padding: 0.4rem 0.85rem;
+      font-size: 0.8rem;
+      border: 1px solid var(--border-subtle);
+      background: rgba(15, 23, 42, 0.9);
+      color: var(--text-main);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      cursor: pointer;
+      transition: background 0.15s ease, transform 0.1s ease,
+        border-color 0.15s ease;
+    }
+
+    .btn:hover {
+      background: #020617;
+      transform: translateY(-1px);
+      border-color: var(--accent);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #22d3ee, #6366f1);
+      color: #0b1120;
+      border: none;
+      font-weight: 600;
+      box-shadow: 0 12px 30px rgba(56, 189, 248, 0.35);
+    }
+
+    .btn-primary:hover {
+      filter: brightness(1.03);
+      transform: translateY(-1px) translateZ(0);
+    }
+
+    main {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 1rem;
+    }
+
+    .card {
+      background: radial-gradient(circle at top left, #1e293b 0, #020617 45%);
+      border-radius: var(--radius-lg);
+      padding: 1rem 1.1rem;
+      border: 1px solid var(--border-subtle);
+      box-shadow: var(--shadow-soft);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: -60%;
+      background: radial-gradient(
+        circle at 15% 0,
+        rgba(56, 189, 248, 0.06),
+        transparent 60%
+      );
+      opacity: 0.9;
+      pointer-events: none;
+    }
+
+    .card-title {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 0.3rem;
+    }
+
+    .card-value {
       font-size: 1.6rem;
       font-weight: 700;
+    }
+
+    .card-meta {
+      font-size: 0.78rem;
+      color: var(--text-muted);
       margin-top: 0.35rem;
     }
 
-    .admin-card-note {
-      font-size: 0.8rem;
-      color: #9ca3af;
-      margin-top: 0.25rem;
+    .card-pill {
+      margin-top: 0.55rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.75rem;
+      padding: 0.25rem 0.55rem;
+      border-radius: 999px;
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      background: rgba(15, 23, 42, 0.9);
+      color: #e0f2fe;
     }
 
-    .admin-section-title {
-      font-size: 1.1rem;
+    .layout-main {
+      display: grid;
+      grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr);
+      gap: 1.2rem;
+    }
+
+    @media (max-width: 900px) {
+      .layout-main {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .panel {
+      background: var(--bg-card-soft);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-subtle);
+      box-shadow: var(--shadow-soft);
+      padding: 1rem 1.1rem 1.1rem;
+      position: relative;
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.75rem;
+      gap: 0.6rem;
+    }
+
+    .panel-title {
+      font-size: 1rem;
       font-weight: 600;
-      margin: 1.5rem 0 0.75rem;
     }
 
-    .table-wrap {
-      overflow-x: auto;
-      border-radius: 0.75rem;
-      border: 1px solid #1e293b;
+    .panel-subtitle {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .search-row {
+      display: flex;
+      gap: 0.6rem;
+      margin-bottom: 0.8rem;
+      flex-wrap: wrap;
+    }
+
+    .input {
+      border-radius: 999px;
+      padding: 0.45rem 0.75rem;
       background: #020617;
+      border: 1px solid #1f2937;
+      color: var(--text-main);
+      font-size: 0.85rem;
+      min-width: 0;
+    }
+
+    .input:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 1px;
+    }
+
+    .badge {
+      font-size: 0.75rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 1);
+      border: 1px solid #1f2937;
+      color: var(--text-muted);
     }
 
     table {
-      border-collapse: collapse;
       width: 100%;
-      font-size: 0.9rem;
+      border-collapse: collapse;
+      font-size: 0.8rem;
     }
 
     thead {
       background: #020617;
     }
 
-    th, td {
-      padding: 0.6rem 0.75rem;
-      text-align: left;
+    th,
+    td {
+      padding: 0.45rem 0.5rem;
       border-bottom: 1px solid #111827;
+      text-align: left;
     }
 
     th {
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: #9ca3af;
+      font-weight: 500;
+      color: var(--text-muted);
+      position: sticky;
+      top: 0;
+      background: #020617;
+      z-index: 1;
     }
 
-    tbody tr:hover {
+    tbody tr:nth-child(even) {
       background: #020617;
     }
 
-    .pill {
+    tbody tr:hover {
+      background: rgba(15, 23, 42, 0.85);
+    }
+
+    .table-wrap {
+      max-height: 360px;
+      overflow: auto;
+      border-radius: 10px;
+      border: 1px solid #111827;
+    }
+
+    .pill-soft {
       display: inline-flex;
       align-items: center;
-      padding: 0.15rem 0.6rem;
+      padding: 0.15rem 0.5rem;
       border-radius: 999px;
-      font-size: 0.75rem;
-      border: 1px solid #4b5563;
+      font-size: 0.72rem;
+      background: rgba(15, 23, 42, 1);
+      color: var(--text-muted);
     }
 
-    .pill-success {
-      border-color: #16a34a;
-      color: #bbf7d0;
-      background: rgba(22, 163, 74, 0.15);
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      margin-right: 0.28rem;
+      background: #22c55e;
     }
 
-    .pill-warning {
-      border-color: #eab308;
-      color: #fef9c3;
-      background: rgba(234, 179, 8, 0.12);
+    .status-dot-new {
+      background: #f97316;
     }
 
-    .pill-error {
-      border-color: #ef4444;
-      color: #fecaca;
-      background: rgba(239, 68, 68, 0.12);
+    .empty {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      padding: 1rem 0.4rem;
     }
 
-    .logs-list {
-      list-style: none;
-      padding-left: 0;
-      margin: 0;
+    .right-panel-section {
+      margin-bottom: 0.9rem;
+      padding-bottom: 0.7rem;
+      border-bottom: 1px dashed #1f2937;
     }
 
-    .logs-item {
-      padding: 0.55rem 0.2rem;
-      border-bottom: 1px dashed #111827;
-      font-size: 0.86rem;
+    .right-panel-section:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .chip-row {
       display: flex;
-      align-items: baseline;
-      gap: 0.6rem;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      margin-top: 0.45rem;
     }
 
-    .logs-timestamp {
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    .chip {
       font-size: 0.75rem;
-      color: #9ca3af;
-      min-width: 6.5rem;
-    }
-
-    .logs-level {
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      padding: 0.12rem 0.5rem;
+      padding: 0.2rem 0.5rem;
       border-radius: 999px;
+      border: 1px solid #1f2937;
+      background: #020617;
+      color: var(--text-muted);
     }
 
-    .logs-level-info {
-      background: #1d4ed8;
+    .muted-small {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    .pill-highlight {
+      background: rgba(37, 99, 235, 0.2);
+      border: 1px solid rgba(59, 130, 246, 0.7);
       color: #dbeafe;
     }
-
-    .logs-level-error {
-      background: #b91c1c;
-      color: #fee2e2;
-    }
-
-    .logs-level-warn {
-      background: #92400e;
-      color: #ffedd5;
-    }
-
-    .logs-message {
-      flex: 1;
-    }
-
-    .admin-top-nav {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 1rem;
-      font-size: 0.85rem;
-      color: #9ca3af;
-    }
-
-    .admin-top-nav a {
-      color: #93c5fd;
-      text-decoration: none;
-    }
-
-    .admin-top-nav a:hover {
-      text-decoration: underline;
-    }
-
-    .env-pill {
-      padding: 0.18rem 0.6rem;
-      border-radius: 999px;
-      border: 1px solid #4b5563;
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      color: #9ca3af;
-    }
-
-    @media (max-width: 640px) {
-      .admin-header {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-      .admin-top-nav {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.4rem;
-      }
-    }
   </style>
+
+  <!-- Supabase client -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 </head>
-
 <body>
-  <div class="admin-shell">
-    <div class="admin-top-nav">
-      <div>
-        ← <a href="index.html">Back to site</a>
+  <div class="page">
+    <header>
+      <div class="brand">
+        <div class="brand-title">Admin Dashboard</div>
+        <div class="brand-subtitle">Anaya Reversed 3D Puzzles · internal view</div>
+        <span class="tag-pill">
+          <span class="tag-pill-dot"></span>
+          Live Supabase data
+        </span>
       </div>
-      <div class="env-pill">ADMIN • INTERNAL VIEW</div>
-    </div>
-
-    <header class="admin-header">
-      <div>
-        <div class="admin-title">Anaya Reversed 3D Puzzles – Admin Dashboard</div>
-        <div class="admin-badge">Monitoring feedback, orders & system health</div>
-      </div>
-      <div>
-        <!-- Placeholder: later this can show logged-in admin name -->
-        <span style="font-size:0.85rem;color:#9ca3af;">Signed in as <strong>Local Admin</strong></span>
+      <div class="top-links">
+        <a href="/" class="btn">← Back to site</a>
+        <button id="refreshBtn" class="btn btn-primary" type="button">
+          ⟳ Refresh data
+        </button>
       </div>
     </header>
 
-    <!-- KPI CARDS -->
-    <section class="admin-grid" id="kpiCards">
-      <!-- JS will fill these -->
-    </section>
+    <main>
+      <!-- Stats cards -->
+      <section class="card-grid">
+        <article class="card">
+          <div class="card-title">Total feedback</div>
+          <div id="stat-total" class="card-value">–</div>
+          <div class="card-meta" id="stat-total-sub">Loading...</div>
+          <div class="card-pill">
+            🧩 Visitors leaving comments
+          </div>
+        </article>
 
-    <!-- RECENT FEEDBACK -->
-    <section>
-      <h2 class="admin-section-title">Recent Feedback Submissions</h2>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Submitted</th>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Type</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody id="feedbackTableBody">
-            <!-- JS will inject rows here -->
-          </tbody>
-        </table>
-      </div>
-    </section>
+        <article class="card">
+          <div class="card-title">Last 7 days</div>
+          <div id="stat-week" class="card-value">–</div>
+          <div class="card-meta">Messages received in the past week</div>
+          <div class="card-pill">
+            ⏱️ Helps you see if traffic is picking up
+          </div>
+        </article>
 
-    <!-- SYSTEM LOGS -->
-    <section>
-      <h2 class="admin-section-title">Latest System Events</h2>
-      <ul class="logs-list" id="logsList">
-        <!-- JS will inject logs here -->
-      </ul>
-    </section>
+        <article class="card">
+          <div class="card-title">Latest submission</div>
+          <div id="stat-latest-date" class="card-value" style="font-size: 1.1rem;">
+            –
+          </div>
+          <div class="card-meta" id="stat-latest-name">Waiting for data...</div>
+          <div class="card-pill pill-highlight">
+            🔍 Use search below to inspect details
+          </div>
+        </article>
+      </section>
+
+      <section class="layout-main">
+        <!-- Left: table -->
+        <section class="panel">
+          <header class="panel-header">
+            <div>
+              <div class="panel-title">Feedback inbox</div>
+              <div class="panel-subtitle">
+                Pulled directly from your Supabase table (most recent first)
+              </div>
+            </div>
+            <span class="badge">
+              <span id="badge-count">0</span> rows
+            </span>
+          </header>
+
+          <div class="search-row">
+            <input
+              id="searchInput"
+              class="input"
+              placeholder="Search by name, email, or message…"
+              type="search"
+            />
+            <span class="muted-small">
+              Tip: start typing a name or email to quickly find a person.
+            </span>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Message</th>
+                </tr>
+              </thead>
+              <tbody id="feedbackBody">
+                <tr>
+                  <td colspan="4" class="empty">Loading feedback…</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Right: quick info -->
+        <aside class="panel">
+          <div class="right-panel-section">
+            <div class="panel-title">What this dashboard shows</div>
+            <p class="muted-small">
+              This page reads data from your Supabase <code>feedback</code> table
+              using the public (anon) key. It never exposes your service role key.
+            </p>
+          </div>
+
+          <div class="right-panel-section">
+            <div class="panel-title">Ideas to extend later</div>
+            <div class="chip-row">
+              <span class="chip">Puzzle order requests</span>
+              <span class="chip">Print status (queued / printing / done)</span>
+              <span class="chip">Average response time</span>
+              <span class="chip">Most requested team / design</span>
+            </div>
+          </div>
+
+          <div class="right-panel-section">
+            <div class="panel-title">Security note</div>
+            <p class="muted-small">
+              Since GitHub Pages is static, this page is not password protected.
+              Treat the link as "secret" for now. If you want real login later,
+              we can wire in Netlify Identity, Auth0, or Supabase Auth.
+            </p>
+          </div>
+        </aside>
+      </section>
+    </main>
   </div>
 
   <script>
-    // --- Placeholder data (later we'll replace with live Supabase / logging data) ---
+    // 1) SET THESE TWO VALUES with your Supabase project details.
+    //    Use the SAME URL and public anon key you used for your form,
+    //    NOT the service role key.
+    const SUPABASE_URL = "https://YOUR-PROJECT-URL.supabase.co";
+    const SUPABASE_ANON_KEY = "YOUR_PUBLIC_ANON_KEY_HERE";
 
-    const kpiData = [
-      {
-        label: "Total Feedback (last 30 days)",
-        value: 18,
-        note: "Real value will come from Supabase feedback table."
-      },
-      {
-        label: "Custom Puzzle Requests",
-        value: 7,
-        note: "Includes puzzle uploads & 3D print quotes."
-      },
-      {
-        label: "Errors Captured (today)",
-        value: 0,
-        note: "Hook this into your logging later (console / Sentry)."
-      },
-      {
-        label: "Uptime (last 7 days)",
-        value: "100%",
-        note: "Tie into UptimeRobot/BetterStack when ready."
+    const supabaseClient = window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_ANON_KEY
+    );
+
+    // Cached data for search/filtering
+    let allRows = [];
+
+    async function loadFeedback() {
+      const tbody = document.getElementById("feedbackBody");
+      tbody.innerHTML =
+        '<tr><td colspan="4" class="empty">Loading feedback…</td></tr>';
+
+      const { data, error } = await supabaseClient
+        .from("feedback") // <-- change if your table name is different
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        console.error(error);
+        tbody.innerHTML =
+          '<tr><td colspan="4" class="empty">Error loading data. Check console.</td></tr>';
+        return;
       }
-    ];
 
-    const feedbackRows = [
-      {
-        submitted: "2026-02-01 18:42",
-        name: "Test User",
-        email: "test@example.com",
-        type: "Puzzle Feedback",
-        status: "New"
-      },
-      {
-        submitted: "2026-01-30 14:15",
-        name: "Broncos Fan",
-        email: "denver@example.com",
-        type: "Custom NFL Puzzle",
-        status: "In progress"
-      },
-      {
-        submitted: "2026-01-29 09:03",
-        name: "Teacher",
-        email: "teacher@example.com",
-        type: "Bulk classroom order",
-        status: "Completed"
+      allRows = data || [];
+      renderTable(allRows);
+      updateStats(allRows);
+    }
+
+    function renderTable(rows) {
+      const tbody = document.getElementById("feedbackBody");
+      const badge = document.getElementById("badge-count");
+
+      badge.textContent = rows.length;
+
+      if (!rows.length) {
+        tbody.innerHTML =
+          '<tr><td colspan="4" class="empty">No feedback yet.</td></tr>';
+        return;
       }
-    ];
 
-    const logs = [
-      {
-        ts: "18:42:10",
-        level: "info",
-        msg: "Admin dashboard loaded successfully."
-      },
-      {
-        ts: "18:42:11",
-        level: "info",
-        msg: "Fetched 3 demo feedback records (placeholder)."
-      },
-      {
-        ts: "18:42:12",
-        level: "warn",
-        msg: "Supabase connection not configured – using local demo data."
-      },
-      {
-        ts: "18:42:15",
-        level: "info",
-        msg: "Ready to connect real logging & monitoring."
-      }
-    ];
+      tbody.innerHTML = rows
+        .map((row) => {
+          const date = row.created_at
+            ? new Date(row.created_at).toLocaleString()
+            : "N/A";
 
-    function renderKPIs() {
-      const container = document.getElementById("kpiCards");
-      container.innerHTML = "";
-      kpiData.forEach(item => {
-        const card = document.createElement("div");
-        card.className = "admin-card";
-        card.innerHTML = `
-          <small>${item.label}</small>
-          <div class="admin-card-value">${item.value}</div>
-          <div class="admin-card-note">${item.note}</div>
+          const safe = (value) =>
+            (value || "")
+              .toString()
+              .replace(/&/g, "&amp;")
+              .replace(/</g, "&lt;")
+              .replace(/>/g, "&gt;");
+
+          return `
+          <tr>
+            <td><span class="pill-soft"><span class="status-dot"></span>${date}</span></td>
+            <td>${safe(row.name || row.full_name || "")}</td>
+            <td>${safe(row.email || "")}</td>
+            <td>${safe(row.message || row.feedback || "")}</td>
+          </tr>
         `;
-        container.appendChild(card);
+        })
+        .join("");
+    }
+
+    function updateStats(rows) {
+      const totalEl = document.getElementById("stat-total");
+      const totalSubEl = document.getElementById("stat-total-sub");
+      const weekEl = document.getElementById("stat-week");
+      const latestDateEl = document.getElementById("stat-latest-date");
+      const latestNameEl = document.getElementById("stat-latest-name");
+
+      const total = rows.length;
+      totalEl.textContent = total;
+      totalSubEl.textContent =
+        total === 1 ? "1 message stored in Supabase." : `${total} messages stored in Supabase.`;
+
+      const now = new Date();
+      const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+      const lastWeekCount = rows.filter((r) => {
+        if (!r.created_at) return false;
+        const d = new Date(r.created_at);
+        return d >= sevenDaysAgo;
+      }).length;
+
+      weekEl.textContent = lastWeekCount;
+
+      if (rows[0]?.created_at) {
+        const d = new Date(rows[0].created_at);
+        latestDateEl.textContent = d.toLocaleString();
+        const nm = rows[0].name || rows[0].full_name || "(no name)";
+        latestNameEl.textContent = `Most recent from ${nm}`;
+      } else {
+        latestDateEl.textContent = "–";
+        latestNameEl.textContent = "No submissions yet.";
+      }
+    }
+
+    function setupSearch() {
+      const input = document.getElementById("searchInput");
+      input.addEventListener("input", (e) => {
+        const q = e.target.value.toLowerCase().trim();
+        if (!q) {
+          renderTable(allRows);
+          return;
+        }
+
+        const filtered = allRows.filter((row) => {
+          const fields = [
+            row.name,
+            row.full_name,
+            row.email,
+            row.message,
+            row.feedback,
+          ]
+            .filter(Boolean)
+            .map((v) => v.toString().toLowerCase());
+          return fields.some((f) => f.includes(q));
+        });
+
+        renderTable(filtered);
       });
     }
 
-    function renderFeedback() {
-      const tbody = document.getElementById("feedbackTableBody");
-      tbody.innerHTML = "";
-      feedbackRows.forEach(row => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${row.submitted}</td>
-          <td>${row.name}</td>
-          <td>${row.email}</td>
-          <td>${row.type}</td>
-          <td>
-            <span class="pill ${
-              row.status === "Completed"
-                ? "pill-success"
-                : row.status === "In progress"
-                ? "pill-warning"
-                : "pill"
-            }">${row.status}</span>
-          </td>
-        `;
-        tbody.appendChild(tr);
-      });
-    }
+    document.getElementById("refreshBtn").addEventListener("click", loadFeedback);
 
-    function renderLogs() {
-      const list = document.getElementById("logsList");
-      list.innerHTML = "";
-      logs.forEach(log => {
-        const li = document.createElement("li");
-        li.className = "logs-item";
-
-        const levelClass =
-          log.level === "error"
-            ? "logs-level-error"
-            : log.level === "warn"
-            ? "logs-level-warn"
-            : "logs-level-info";
-
-        li.innerHTML = `
-          <span class="logs-timestamp">${log.ts}</span>
-          <span class="logs-level ${levelClass}">${log.level}</span>
-          <span class="logs-message">${log.msg}</span>
-        `;
-        list.appendChild(li);
-      });
-    }
-
-    // Initialize dashboard
-    renderKPIs();
-    renderFeedback();
-    renderLogs();
-
-    // Placeholder: later we can add real auth here
-    console.log("Admin dashboard initialized – this is a good place to hook in auth and real data.");
+    // Initialize
+    setupSearch();
+    loadFeedback();
   </script>
 </body>
 </html>
